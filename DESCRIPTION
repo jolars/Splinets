@@ -1,0 +1,14 @@
+Package: Splinets
+Date: 2021-01-05
+Type: Package
+Title: Algebra and calculus of functional splines; spline support sets; orthogonal spline bases
+Version: 1.0.0
+Author: Xijia Liu, Krzysztof Podgórski
+Maintainer: Krzysztof Podgórski <krys.podgorski@gmail.com>
+Description: The package represents efficiently splines through the local Taylor representation accounting also for their support sets; generates B-splines and orthogonal bases of splines that reside on small total support sets, such bases are referred to as 'splinets'; builds arbitrary splines; generates random splines; performs all fundamental algebraic and calculus operations on splines; performs optimal, in the least square sense,  functional fit by 'splinets' to the data consisting of sampled values of an unknown function. 
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+Imports:
+    methods

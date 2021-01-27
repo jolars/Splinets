@@ -1,0 +1,81 @@
+#Truck data
+LapTruck=read.csv('/Users/mats-ksp/Box\ Sync/ToDoNow/Rjournal/FiguresProgramming/Data/LStruck7.csv',header = F)
+Time=read.csv('/Users/mats-ksp/Box\ Sync/ToDoNow/Rjournal/FiguresProgramming/Data/t.csv',header = F)
+colnames(LapTruck)=NULL
+colnames(Time)=NULL
+LapTruck=t(LapTruck) #samples are in columns
+
+LapTruck=cbind(Time,LapTruck)
+matplot(LapTruck[,1],LapTruck[,2:1001],type='l',lty=1)
+
+LTruck=as.matrix(LapTruck) #the arguments in project() need to be matrices not dataframes
+
+knots=seq(-100,100, by=1)
+TruckProj=project(LTruck,knots)
+
+MeanTruck=matrix(colMeans(TruckProj$coeff),ncol=dim(TruckProj$coeff)[2])
+MeanTruckSp=lincomb(TruckProj$basis,MeanTruck)
+
+plot(TruckProj$sp,sID=1:10)
+length(TruckProj$sp@der)
+
+Sigma=cov(TruckProj$coeff)
+Spect=eigen(Sigma,symmetric = T)
+
+plot(Spect$values, type ='l',col='blue', lwd=4 )
+
+EigenTruckSp=lincomb(TruckProj$basis,t(Spect$vec))
+plot(EigenTruckSp,sID=1:5) #The first largest eigen functions
+
+#Comparison of the original data, the spline projected data, the eigenfunctions projected data
+
+C=TruckProj$coeff[1,,drop=F]%*%Spect$vec[,1:50]
+EgnFncts10=subsample(EigenTruckSp,1:10)
+EgnFncts50=subsample(EigenTruckSp,1:50)
+EgnFncts100=subsample(EigenTruckSp,1:100)
+#The original data
+matplot(LapTruck[,1],LapTruck[,2],type='l',lty=1,xlab='',ylab='')
+#The spline data
+lines(TruckProj$sp,sID=1,col='red',lty=2,lwd=1)
+#The spline projected data
+C=TruckProj$coeff%*%Spect$vec
+lines(lincomb(EgnFncts10,C[1,1:10,drop=F]),col='green')
+lines(lincomb(EgnFncts50,C[1,1:50,drop=F]),col='blue',lwd=1)
+lines(lincomb(EgnFncts100,C[1,1:100,drop=F]),col='brown',lwd=1.5)
+
+#Joint distribution of the variables with the first two eigenvalues
+Z1=(C[,1]-matrix(MeanTruck%*%Spect$vec[,1],nrow=1000))/sqrt(Spect$values[1])
+Z2=(C[,2]-matrix(MeanTruck%*%Spect$vec[,2],nrow=1000))/sqrt(Spect$values[2])
+
+mean(C[,1]/sqrt(Spect$values[1]))
+var(C[,1]/sqrt(Spect$values[1]))
+var(C[,2]/sqrt(Spect$values[2]))
+mean(C[,2]/sqrt(Spect$values[2]))
+a=matrix(rnorm(2000),ncol=2)
+plot(Z1,Z2,xlab='',ylab='',pch=17,col='red')
+
+points(a[,1],a[,2],pch=22,)
+
+qqplot(Z1)
+
+matplot(LapTruck[,1],LapTruck[,2:3],type='l',lty=1,col=c('red'),xlab='',ylab='')
+lines(TruckProj$sp,sID=1,lty=3,col=c('black'))
+lines(TruckProj$sp,sID=2,lty=3,col=c('black'))
+lines(MeanTruckSp, lwd=3)
+
+
+ResTruckSp1=lincomb(TruckProj$basis,ResTruckCoeff[1,,drop=F])
+
+#Tire data
+LapTire=read.csv('/Users/mats-ksp/Box\ Sync/ToDoNow/Rjournal/FiguresProgramming/Data/LStire7.csv',header = F)
+colnames(LapTire)=NULL
+TireProj=project(LTire,knots)
+
+LapTire=t(LapTire) #samples are in columns
+typeof(LapTire) #needs to be a matrix
+LTire=as.matrix(LapTire)
+
+LapTire=cbind(Time,LapTire) #first is argument
+matplot(LTire[,1],LTire[,2:5],type='l',lty=1)
+
+
